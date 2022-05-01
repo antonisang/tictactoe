@@ -1,0 +1,65 @@
+create database clinic;
+use clinic;
+
+create table doctor (
+d_med_reg_num int unique not null auto_increment,
+d_first_name varchar(120) not null,
+d_last_name varchar(120) not null,
+d_tax_num bigint unique not null,
+d_hired_date timestamp,
+primary key(d_med_reg_num)
+);
+
+create table patient (
+p_reg_num int unique not null auto_increment,
+p_first_name varchar(120) not null,
+p_last_name varchar(120) not null,
+p_dob date,
+p_doc int not null,
+primary key(p_reg_num),
+foreign key(p_doc) references doctor(d_med_reg_num) on update cascade on delete restrict
+);
+
+create table clinic_dept (
+dept_code varchar(10) unique not null, # e.g. MRIA1 | RADTR06
+dept_name varchar(120) unique not null, # unique => to avoid department's duplicate names
+dept_max_capacity smallint not null,
+dept_docs int not null,
+primary key(dept_code),
+foreign key(dept_docs) references doctor(d_med_reg_num) on update cascade on delete restrict
+);
+
+create table diseases (
+di_code varchar(25) unique not null, # e.g. H1N3
+di_name varchar(100) not null,
+di_syms text not null,
+primary key(di_code)
+);
+
+create table patient_diseases (
+patient_code int not null,
+disease_code varchar(25) not null,
+primary key(patient_code, disease_code),
+foreign key(patient_code) references patient(p_reg_num) on update cascade on delete restrict,
+foreign key(disease_code) references diseases(di_code) on update cascade on delete restrict
+);
+
+insert into doctor values(1, 'Iordanis', 'Athanasiadis', '4589534786', current_timestamp());
+insert into doctor values(2, 'Ignatios', 'Konstantinidis', '1289334386', current_timestamp());
+insert into doctor values(3, 'Basilis', 'Terlegkas', '1597538520', current_timestamp());
+
+insert into clinic_dept values('RADTR01', 'Radical Treatment - Section 01', 50, 2);
+insert into clinic_dept values('MRI03', 'Magnetic Resonance Imaging - Section 03', 1, 1);
+insert into clinic_dept values('PSY02', 'Psychiatric - Section 02', 22, 3);
+
+insert into diseases values('N2H3', 'Influenza A N2H3', 'Nausea, high blood pressure, difficulty on food consumption');
+insert into diseases values('ICD-10', 'Paranoid personality disorder', 'High anxiety, patient desire for social isolation');
+insert into diseases values('ICD-10: J34.2', 'Scoliosis of the nasal septum', 'Difficulty for breathing, high stress on pulmonary cavity');
+
+insert into patient values(1, 'John', 'Doe', '1968-04-23', 2);
+insert into patient values(null, 'Maria', 'Chalkopoulou', '1976-01-26', 3);
+insert into patient values(3, 'Dimitrios', 'Xalatzis', '1962-06-13', 1);
+
+insert into patient_diseases values(1, 'N2H3');
+insert into patient_diseases values(2, 'ICD-10: J34.2');
+insert into patient_diseases values(3, 'ICD-10');
