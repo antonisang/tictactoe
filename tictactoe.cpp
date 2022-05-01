@@ -107,7 +107,7 @@ int main() {
             if (tictactoe(moves)) {
                 clearTerminal();
                 renderTable(moves);
-                cout << player_playing == 1 ? "\033[1;32mPlayer 1 wins! Congratulations!\033[0;37m" : "\033[1;32mPlayer 2 wins! Congratulations!\033[0;37m" << endl;
+                cout << (player_playing == 1 ? "\033[1;32mPlayer 1 wins! Congratulations!\033[0;37m" : "\033[1;32mPlayer 2 wins! Congratulations!\033[0;37m") << endl;
                 return 0;
             };
             player_playing = player_playing == 1 ? 2 : 1;
