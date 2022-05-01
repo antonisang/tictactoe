@@ -20,14 +20,36 @@ Cell space -> 3 (2 space + 1 char)
 
 using namespace std;
 
+bool tictactoe(char moveData[3][3]) {
+    // Horizontal and vertical check
+    // Direct comparison a == b == c fails for a reason;
+    for (int i = 0; i < 3; i++) {
+        if (moveData[i][0] == moveData[i][1] && moveData[i][1] == moveData[i][2]) {
+            return true;
+        }
+        if (moveData[0][i] == moveData[1][i] && moveData[1][i] == moveData[2][i]) {
+            return true;
+        }
+    }
+    // Main diagonal check
+    if (moveData[0][0] == moveData[1][1] && moveData[1][1] == moveData[2][2]) {
+        return true;
+    }
+    // Reverse diagonal check
+    if (moveData[2][0] == moveData[1][1] && moveData[1][1] == moveData[0][2]) {
+        return true;
+    }
+    return false;
+}
+
 bool evalSubmit(char moveData[3][3], int position, int playerId) {
     int xIndex = floor((position - 0.1) / 3);
     int yIndex = (position - 3 * xIndex) - 1;
-    if (moveData[xIndex][yIndex] == ' ') {
+    if (moveData[xIndex][yIndex] != 'X' || moveData[xIndex][yIndex] != 'Y') {
         moveData[xIndex][yIndex] = playerId == 1 ? 'X' : 'O';
         return true;
     } else {
-        cout << "A player has already placed a value here" << endl;
+        cout << "\033[1;31mA player has already placed a value here or you typed a value out of table range\033[0;37m" << endl;
         return false;
     }
 }
@@ -75,18 +97,26 @@ int main() {
     cout << "Welcome to Tic Tac Toe by Antonis Anagnostou" << endl << "You can review the play positions below:" << endl << endl;
     char moves[3][3] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
     renderTable(moves);
-    resetMoves(moves);
+    // If this function is used game logic will immediately evaluate to win
+    // resetMoves();
     while (empty_places != 0) {
         int position = 0;
         cout << "Player " << player_playing << " <" << (player_playing == 1 ? "X" : "O") << "> choose a position: ";
         cin >> position;
         if (evalSubmit(moves, position, player_playing)) {
+            if (tictactoe(moves)) {
+                clearTerminal();
+                renderTable(moves);
+                cout << "\033[1;32mPlayer 1 wins! Congratulations!\033[0;37m" << endl;
+                return 0;
+            };
             player_playing = player_playing == 1 ? 2 : 1;
+            clearTerminal();
+            renderTable(moves);
             empty_places--;
         };
     }
-    cout << endl << "Game ended thanks for playing!";
-    // renderTable(moves);
+    cout << endl << "Game ended - DRAW!";
     return 0;
 }
 
