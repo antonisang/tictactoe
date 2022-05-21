@@ -42,9 +42,9 @@ bool tictactoe(char moveData[3][3]) {
     return false;
 }
 
-bool evalSubmit(char moveData[3][3], int position, int playerId) {
-    int xIndex = floor((position - 0.1) / 3);
-    int yIndex = (position - 3 * xIndex) - 1;
+bool evalSubmit(char moveData[3][3], int position, int playerId) {     
+    int xIndex = floor((position - 0.1) / 3); // where 3 are columns
+    int yIndex = (position - 3 * xIndex) - 1; // where 3 are rows
     if (moveData[xIndex][yIndex] != 'X' || moveData[xIndex][yIndex] != 'Y') {
         moveData[xIndex][yIndex] = playerId == 1 ? 'X' : 'O';
         return true;
